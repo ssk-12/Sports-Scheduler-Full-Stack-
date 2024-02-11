@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="<%= csrfToken%>">
+    <meta name="role" content="<%= role%>">
+    <meta name="players" content="<%=playerid%>">
+    <meta name="userid" content="<%=userid%>">
+    <meta name="sport" content="<%=sport%>">
+    <meta name="sportowner" content="<%=sportowner%>">
+    <title><%= title %></title>
+</head>
+<body class="bg-gray-100" onload="adminoptions()">
+    <div class="min-h-screen flex flex-col justify-center">
+        <div class="mx-auto w-full max-w-2xl px-6 py-8">
+            <%- include("header.ejs") %>
+            <div class="space-y-4">
+                <h1 class="text-center text-4xl font-bold text-gray-900"><%= owner %>'s Session</h1>
+                <div id="creator" class="text-right">
+                    <a href="#" class="text-red-600 hover:text-red-800 font-medium cursor-pointer" onclick="deleteSession('<%= session.id %>')">Delete Session</a>
+                    <a href="/session/<%= session.id %>/edit" class="ml-4 text-blue-600 hover:text-blue-800 font-medium cursor-pointer">Edit Session</a>
+                </div>
+                <ul class="list-disc ml-5 text-gray-700">
+                    <li>Location: <%= session.location %></li>
+                    <li>Date: <%= session.date %></li>
+                    <li>Time: <%= session.time %></li>
+                </ul>
+                <h2 class="text-2xl font-semibold underline">Players</h2>
+                <ul class="list-disc ml-5 text-gray-700">
+                    <% for(var i = 0; i < players.length; i++) { %>
+                        <li class="flex justify-between items-center py-1">
+                            <%= players[i] %>
+                            <a href="#" class="hidden" onclick="removeplayer('<%= session.id %>', '<%= playerid[i] %>', '<%= playerid %>')" id="admindelete">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+                <div class="flex space-x-4 justify-center pt-4">
+                    <a href="#" id="join" class="bg-green-600 hover:bg-green-800 text-white font-medium py-2 px-4 rounded cursor-pointer" onclick="join('<%= session.id %>', '<%= userid %>', '<%= playerid %>')">Join Session</a>
+                    <a href="#" id="leave" class="bg-red-600 hover:bg-red-800 text-white font-medium py-2 px-4 rounded cursor-pointer" onclick="leave('<%= session.id %>', '<%= userid %>', '<%= playerid %>')">Leave Session</a>
+                </div>
+            </div>
+            <a href='/home' class="block mt-8 text-center text-green-600 hover:text-green-800">Return to home page</a>
+            <%- include("notifications.ejs") %>
+        </div>
+    </div>
+</body>
+</html>

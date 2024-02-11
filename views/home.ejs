@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken%>">
+    <meta name="role" content="<%= role%>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Sports-Scheduler</title>
+</head>
+<script>
+    var token = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    var role = document.querySelector('meta[name="role"]').getAttribute("content");
+    function control() {
+        if (role != 'admin') {
+            document.getElementById('admin-controls').style.display = 'none';
+        }
+    }
+    function sport(title) {
+        window.location.replace(`/sport/${title}`);
+    }
+    function session(id) {
+        window.location.replace("/session/" + id);
+    }
+</script>
+<body onload="control()" class="bg-gray-100">
+    <div class="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-4xl">
+            <form action="/signout" method="get" class="flex justify-between items-center w-full">
+                <h1 class="text-4xl font-bold text-gray-900">Welcome <%= userName %>!</h1>
+                <button type="submit" class="mt-4 bg-green-600 text-white px-5 py-2 rounded-md font-medium hover:bg-green-800 transition-colors">Sign out</button>
+            </form>
+            <div class="text-right w-full">
+                <a href="/changepassword" class="text-green-600 hover:text-green-800 transition-colors">Change password</a>
+            </div>
+            <div id="admin-controls" class="mt-4 space-y-2">
+                <a href="/createsport" class="block text-green-600 hover:text-green-800 transition-colors">Create a new sport</a>
+                <a href="/reports" class="block text-green-600 hover:text-green-800 transition-colors">View reports</a>
+            </div>
+            <h2 class="text-2xl font-semibold underline mt-6">Your upcoming sessions</h2>
+            <ul class="space-y-4 mt-4">
+                <% if(usersessions.length == 0 || usersessions == null) { %>
+                    <li class="text-lg text-gray-600">There are no sessions available, wanna create one?</li>
+                <% } else { %>
+                    <% for(var i = 0; i < usersessions.length; i++) { %>
+                        <li class="p-4 hover:bg-purple-100 rounded-md transition-colors">
+                            <div class="cursor-pointer" onclick="session('<%= usersessions[i].id %>')">
+                                <p class="text-lg font-semibold text-gray-800 underline">Session <%= i + 1 %>:</p>
+                                <p class="text-gray-600">Date: <%= usersessions[i].date %></p>
+                                <p class="text-gray-600">Time: <%= usersessions[i].time %></p>
+                                <p class="text-gray-600">Location: <%= usersessions[i].location %></p>
+                                <p class="text-red-700"><%= usersessions[i].additional %> slots left!</p>
+                            </div>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+            <h2 class="text-2xl font-semibold underline mt-6">Available Sports</h2>
+            <ul class="space-y-4 mt-4">
+                <% for(var i = 0; i < sportslist.length; i++) { %>
+                    <li class="p-4 hover:bg-purple-100 rounded-md transition-colors">
+                        <div class="cursor-pointer" onclick="sport('<%= sportslist[i].title %>')">
+                            <p class="text-lg font-semibold text-gray-800"><%= sportslist[i].title %></p>
+                        </div>
+                    </li>
+                <% } %>
+            </ul>
+            <%- include("notifications.ejs") %>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken%>">
+    <meta name="role" content="<%= role%>">
+    <meta name="userid" content="<%= userid%>">
+    <meta name="owner" content="<%= owner%>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        var token=document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        var role=document.querySelector('meta[name="role"]').getAttribute("content");
+        var userid=document.querySelector('meta[name="userid"]').getAttribute("content");
+        var owner=document.querySelector('meta[name="owner"]').getAttribute("content");
+        function deleteTodo(id){
+            fetch(`/todos/${id}`,{
+                method:"delete",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    "_csrf":token
+                })
+            }).then((res)=>{
+                if(res.ok){
+                    window.location.reload();
+                }
+            }).catch((error)=>console.log(error));
+        }
+        function session(id){
+            window.location.replace("/session/"+id);
+        }
+        function deleteSport(sport){
+            fetch(`/sport/${sport}`,{
+                method:"delete",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    "_csrf":token
+                })
+            }).then((res)=>{
+                if(res.ok){
+                    window.location.replace("/home");
+                }
+            }).catch((error)=>console.log(error));
+        }
+        function creatorop(){
+            if(userid!=owner){
+                document.getElementById('creator').style.display='none';
+            }
+        }
+    </script>
+    <title><%= sport %></title>
+</head>
+<body onload="creatorop()" class="bg-gray-100">
+    <div class="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-4xl">
+            <div class="flex justify-between items-center w-full">
+                <h1 class="text-4xl font-bold text-gray-900"><%= sport %></h1>
+                <div id="creator" class="text-right">
+                    <a href="#" class="text-red-600 hover:text-red-800 font-medium cursor-pointer" onclick="deleteSport('<%= sport %>')">Delete Sport</a>
+                </div>
+            </div>
+            <h2 class="text-2xl font-semibold underline mt-6">Sessions</h2>
+            <ul class="space-y-4 mt-4">
+                <% if(ses.length == 0 || ses == null) { %>
+                    <li class="text-lg text-gray-600">There are no sessions available, wanna create one?</li>
+                <% } else { %>
+                    <% for(var i = 0; i < ses.length; i++) { %>
+                        <li class="p-4 hover:bg-purple-100 rounded-md transition-colors cursor-pointer" onclick="session('<%= ses[i].id %>')">
+                            <p class="text-lg font-semibold text-gray-800 underline">Session <%= i + 1 %>:</p>
+                            <p class="text-gray-600">Date: <%= ses[i].date %></p>
+                            <p class="text-gray-600">Time: <%= ses[i].time %></p>
+                            <p class="text-gray-600">Location: <%= ses[i].location %></p>
+                            <p class="text-red-700"><%= ses[i].additional %> slots left!</p>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+            <div class="space-y-2 mt-4">
+                <a href='/createsession/<%= sport %>' class="block text-green-600 hover:text-green-800 transition-colors">Create Session</a>
+                <a href='/sport/<%= sport %>/report' class="block text-green-600 hover:text-green-800 transition-colors">View Report</a>
+            </div>
+            <div class="text-center mt-8">
+                <a href='/home' class="text-green-600 hover:text-green-800 transition-colors">Return to home page</a>
+            </div>
+            <%- include("notifications.ejs") %>
+        </div>
+    </div>
+</body>
+</html>
