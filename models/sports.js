@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       Sports.belongsTo(models.User,{
         foreignKey:'userId',
       })
+
+      Sports.belongsTo(models.Sportname,{
+        foreignKey:'sportId'
+      })
     }
   }
   Sports.init({

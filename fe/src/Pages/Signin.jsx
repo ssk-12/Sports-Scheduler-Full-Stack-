@@ -22,10 +22,10 @@ export const Signin = () => {
         password,
       });
 
-      // Assuming the response includes a token, userid, and username/firstName
+      //setting up local storage items
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userid", response.data.userid);
-      localStorage.setItem("username", response.data.username); // Adjust based on actual response structure
+      localStorage.setItem("username", response.data.username); 
 
       if (response.data.message == "User signed in successfully") {
         navigate("/dashboard");

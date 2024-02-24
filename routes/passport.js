@@ -17,7 +17,7 @@ const initializePassport = () => {
     },
         async (jwtPayload, done) => {
 
-            console.log(jwtPayload.id);
+            // console.log(jwtPayload.id);
             try {
                 const user = await User.findByPk(jwtPayload.id);
                 if (user) {

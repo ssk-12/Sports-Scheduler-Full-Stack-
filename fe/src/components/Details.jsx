@@ -5,6 +5,7 @@ import axios from "axios";
 export const Details = () => {
     const navigate = useNavigate();
     const [msg, setMsg] = useState("");
+    const[username, setUsername]= useState("");
 
     useEffect(() => {
         // Define an async function inside useEffect
@@ -28,6 +29,7 @@ export const Details = () => {
 
                 if(response){
                     setMsg(response.data.message); 
+                    setUsername(response.data.user)
                 }
 
 
@@ -46,6 +48,7 @@ export const Details = () => {
         <div>
             <p>hi</p>
             <p>{msg}</p>
+            <p>{username}</p>
         </div>
     );
 };
