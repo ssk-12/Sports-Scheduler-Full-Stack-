@@ -9,6 +9,7 @@ export function Dashboard(){
     const navigate = useNavigate();
 
     const[userName, setUserName] =useState("");
+    const[userrole, setUserrole] = useState("player");
 
     useEffect(() => {
         
@@ -18,7 +19,7 @@ export function Dashboard(){
                 const token = localStorage.getItem("token");
 
                 if (!token) {
-                    
+
                     console.log("No token found");
                     // redirect to login
                     navigate( "/signin", { replace: true });
@@ -34,12 +35,14 @@ export function Dashboard(){
 
                 if(response){
                     setUserName(response.data.user)
+                    setUserrole(response.data.role)
                 }
 
 
                 
             } catch (error) {
                 console.error("Failed to fetch balance", error);
+                navigate('/signin');
             }
         };
 
@@ -49,7 +52,7 @@ export function Dashboard(){
 
 
     return <div>
-        <Appbar username={userName}/>
+        <Appbar username={userName} role={userrole} />
         <SportList/>
         {/* <SportsSessionForm/> */}
     </div>

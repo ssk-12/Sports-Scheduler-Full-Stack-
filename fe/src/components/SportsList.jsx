@@ -13,6 +13,7 @@ export const SportList = () => {
         setSports(response.data);
       } catch (error) {
         console.error('Error fetching sports:', error);
+        navigate('/signin');
       }
     };
 
@@ -21,7 +22,7 @@ export const SportList = () => {
 
   const handleSelectSport = (sport) => {
     // navigate(`/create-session/${sport.sportTitle}/${sport.sportId}`);
-    navigate('/create-session?id='+ sport.sportId + "&title=" + sport.sportTitle)
+    navigate('/sessions?id='+ sport.sportId + "&title=" + sport.sportTitle)
   };
 
   return (
@@ -30,14 +31,26 @@ export const SportList = () => {
         {sports.map((sport, index) => (
           <li 
             key={index} 
-            className="cursor-pointer p-2 hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md rounded-lg"
+            className="cursor-pointer p-2 hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md rounded-lg flex justify-between items-center"
             onClick={() => handleSelectSport(sport)}
           >
-            <h3 className="font-semibold text-lg text-gray-800">{sport.sportTitle}</h3>
-            <p className="text-sm text-gray-600">{sport.userName}</p>
+            <div>
+              <h3 className="font-semibold text-lg text-gray-800">{sport.sportTitle}</h3>
+              <p className="text-sm text-gray-600">{sport.userName}</p>
+            </div>
+            <button
+              className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={(e) => {
+                e.stopPropagation(); 
+                navigate('/create-session?id='+ sport.sportId + "&title=" + sport.sportTitle)
+              }}
+            >
+              Create Session
+            </button>
           </li>
         ))}
       </ul>
     </div>
   );
+  
 };
