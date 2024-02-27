@@ -5,13 +5,13 @@ import { Button } from "../components/Button";
 import { Heading } from "../components/Heading";
 import { InputBox } from "../components/InputBox";
 import { SubHeading } from "../components/SubHeading";
-import { Message } from "../components/Message"; // Make sure to import the Message component
+import { Message } from "../components/Message"; 
 import { useState } from "react";
 
 export const Signin = () => {
-  const [email, setEmail] = useState(""); // Changed from username to email for clarity
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [msg, setMessage] = useState(""); // Added for message handling
+  const [msg, setMessage] = useState(""); 
 
   const navigate = useNavigate();
 

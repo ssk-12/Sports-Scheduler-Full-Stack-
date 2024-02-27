@@ -32,9 +32,8 @@ router.post('/signup', async (req, res) => {
         const user = await User.create({ userName: username, email: email, password: hashedPassword, role, sessions: "" });
 
         const payload = {
-            sub: user.id,
-            username: user.username,
             id: user.id,
+            username: user.username,
         };
 
         // Generate JWT token
@@ -43,9 +42,9 @@ router.post('/signup', async (req, res) => {
         res.json({
             message: "User created successfully",
             token: token,
-            userid: user.id,
-            username: user.username,
-            role: user.role
+            // userid: user.id,
+            // username: user.username,
+            // role: user.role
         });
 
 
@@ -75,20 +74,19 @@ router.post('/signin', async (req, res) => {
 
         // generate JWT token
         const payload = {
-            sub: user.id,
-            username: user.userName,
             id: user.id,
+            username: user.userName,
         };
 
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-        console.log(token);
+
         // Respond with token and user details
         res.json({
             message: "User signed in successfully",
             token: token,
-            userid: user.id,
-            username: user.userName,
-            role: user.role
+            // userid: user.id,
+            // username: user.userName,
+            // role: user.role
         });
 
 
@@ -102,7 +100,7 @@ router.post('/signin', async (req, res) => {
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
     // console.log(req.user)
     console.log("accessed protected route,", req.user.dataValues.userName);
-    res.json({ message: 'You accessed a protected route!', user: req.user.dataValues.userName,role:req.user.dataValues.role });
+    res.json({ message: 'You accessed a protected route!', user: req.user.dataValues.userName, role: req.user.dataValues.role });
 
 });
 
@@ -110,6 +108,7 @@ router.get('/protected', passport.authenticate('jwt', { session: false }), (req,
 router.get('/sports-names', async (req, res) => {
     // console.log("accessed /sportsname")
     try {
+        //retriving sports along with user who created it
         const sportsNames = await Sportname.findAll({
             include: [
                 {
@@ -125,9 +124,6 @@ router.get('/sports-names', async (req, res) => {
             userName: sport.User.userName,
             sportId: sport.id,
         }));
-
-
-        console.log(result);
         res.json(result);
     } catch (error) {
         console.error('Error fetching sports names and user names:', error);
@@ -197,33 +193,55 @@ router.post('/sports-session', passport.authenticate('jwt', { session: false }),
 router.post('/sports-by-id', async (req, res) => {
     const { sportId } = req.body;
     console.log(sportId)
-  
+
     try {
-      const sportsWithUsers = await Sports.findAll({
-        where: { sportId }, // Filtering by sportId
-        include: [{
-          model: User,
-          attributes: ['userName'] 
-        }]
-      });
-  
-      const responseData = sportsWithUsers.map(sport => ({
-        title: sport.title,
-        date: sport.date,
-        time: sport.time,
-        location: sport.location,
-        userName: sport.User.userName 
-      }));
-  
-      res.json(responseData);
+        const sportsWithUsers = await Sports.findAll({
+            where: { sportId }, // Filtering by sportId
+            include: [{
+                model: User,
+                attributes: ['userName']
+            }]
+        });
+
+        const responseData = sportsWithUsers.map(sport => ({
+            id: sport.id,
+            title: sport.title,
+            date: sport.date,
+            time: sport.time,
+            location: sport.location,
+            userName: sport.User.userName
+        }));
+
+        res.json(responseData);
     } catch (error) {
-      console.error('Error fetching sports with user names:', error);
-      res.status(500).send('Internal Server Error');
+        console.error('Error fetching sports with user names:', error);
+        res.status(500).send('Internal Server Error');
     }
-  });
+});
 
 
+router.post("/join-session-id",passport.authenticate('jwt', { session: false }), async(req,res)=>{
+    try {
 
+        const{sessionid} = req.body;
+        const user = await User.findByPk(req.user.dataValues.id);
+        
+        // Check if user has existing sessions and append the new session ID
+        let updatedSessions = user.sessions ? `${user.sessions},${sessionid}` : `${sessionid}`;
+
+        // Update user's sessions
+        await user.update({ sessions: updatedSessions });
+
+        res.json({
+            message: "joined successfully"
+        })
+
+
+        
+    } catch (error) {
+        res.json(error);
+    }
+})
 
 
 module.exports = router;

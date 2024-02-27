@@ -26,8 +26,8 @@ export const Signup = () => {
       });
 
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userid", response.data.userid);
-      localStorage.setItem("username", response.data.username);
+      // localStorage.setItem("userid", response.data.userid);
+      // localStorage.setItem("username", response.data.username);
 
       setMessage(response.data.message); 
 
